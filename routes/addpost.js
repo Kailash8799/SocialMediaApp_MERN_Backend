@@ -203,7 +203,7 @@ router.post("/deletevideo", Authuser, async (req, res) => {
     const newVideos = videos?.filter(
       (item) => item.toString() !== (post[0]?._id).toString()
     );
-    
+
     await Profile.updateOne(
       { $and: [{ _id: profileid }, { userid: id }] },
       { $set: { videos: newVideos } },
@@ -300,7 +300,7 @@ router.post("/deletetweet", Authuser, async (req, res) => {
     const newTweets = tweets?.filter(
       (item) => item.toString() !== (post[0]?._id).toString()
     );
-    
+
     await Profile.updateOne(
       { $and: [{ _id: profileid }, { userid: id }] },
       { $set: { tweets: newTweets } },
@@ -628,4 +628,22 @@ router.post("/liketweet", Authuser, async (req, res) => {
     return;
   }
 });
+
+router.post("/getAllPosts", async (req, res) => {
+  try {
+    const {secret} = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const posts = await Image.find();
+    console.log(posts);
+    res.json({ success: true, message: "Post fetched"});
+    return;
+  } catch (error) {
+    res.json({success: false, message: "Some error accured!"});
+    return;
+  }
+});
+
 module.exports = router;
