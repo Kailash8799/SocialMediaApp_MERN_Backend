@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const ProfileSchema = mongoose.Schema({
     userid:{type:String,required:true,unique:true},
+    username:{type:String,required:true,unique:true},
+    useremail:{type:String,required:true,unique:true},
     followers:{type:Array},
     following:{type:Array},
     videos:{type:Array},

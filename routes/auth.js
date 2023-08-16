@@ -469,6 +469,8 @@ router.post("/verifyuser", async (req, res) => {
     );
     const prof = new Profile({
       userid: user[0]?._id,
+      username:user[0]?.username,
+      useremail:user[0]?.email
     });
     await prof.save();
     res.json({
