@@ -446,7 +446,7 @@ router.post("/verifyuser", async (req, res) => {
     const { username, email, id } = decode;
     const user = await User.find(
       { $and: [{ username: username }, { email: email }] },
-      { _id: 1, username: 1, email: 1, password: 0 }
+      { password: 0 }
     );
     if (user?.length === 0) {
       res.json({
