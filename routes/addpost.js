@@ -43,7 +43,7 @@ router.post("/postimage", Authuser, async (req, res) => {
     let newpost = new Image({
       imageLink: imageLink,
       uid: id,
-      profileId: profileid,
+      profileId: new mongoose.Types.ObjectId(profileid),
       tagged: tagged,
       caption: caption,
       hashtags: hashtags,
@@ -141,7 +141,7 @@ router.post("/postvideo", Authuser, async (req, res) => {
     let newVideopost = new Video({
       videoLink: videoLink,
       uid: id,
-      profileId: profileid,
+      profileId: new mongoose.Types.ObjectId(profileid),
       tagged: tagged,
       caption: caption,
       hashtags: hashtags,
@@ -240,7 +240,7 @@ router.post("/posttweet", Authuser, async (req, res) => {
     let newTextpost = new Tweet({
       tweet: tweet,
       uid: id,
-      profileId: profileid,
+      profileId: new mongoose.Types.ObjectId(profileid),
       hashtags: hashtags,
     });
     const post = await newTextpost.save();
@@ -344,7 +344,7 @@ router.post("/postimagecomment", Authuser, async (req, res) => {
     let newcommentimage = new CommentOnImage({
       comment: comment,
       uid: id,
-      profileId: profileid,
+      profileId: new mongoose.Types.ObjectId(profileid),
       postid: postid,
     });
     const post = await newcommentimage.save();
@@ -395,7 +395,7 @@ router.post("/postvideocomment", Authuser, async (req, res) => {
     let newcommentvideo = new CommentOnVideo({
       comment: comment,
       uid: id,
-      profileId: profileid,
+      profileId: new mongoose.Types.ObjectId(profileid),
       postid: postid,
     });
     const post = await newcommentvideo.save();
@@ -445,7 +445,7 @@ router.post("/posttextcomment", Authuser, async (req, res) => {
     let newcommenttweet = new CommentOnTweet({
       comment: comment,
       uid: id,
-      profileId: profileid,
+      profileId: new mongoose.Types.ObjectId(profileid),
       postid: postid,
     });
     const post = await newcommenttweet.save();
@@ -499,7 +499,7 @@ router.post("/likeimage", Authuser, async (req, res) => {
     }
     let likeimage = new LikeImage({
       uid: id,
-      profileId: profileid,
+      profileId: new mongoose.Types.ObjectId(profileid),
       postid: postid,
     });
     const post = await likeimage.save();
@@ -554,7 +554,7 @@ router.post("/likevideo", Authuser, async (req, res) => {
     }
     let likevideo = new LikeVideo({
       uid: id,
-      profileId: profileid,
+      profileId: new mongoose.Types.ObjectId(profileid),
       postid: postid,
     });
     const post = await likevideo.save();
@@ -609,7 +609,7 @@ router.post("/liketweet", Authuser, async (req, res) => {
     }
     let liketweet = new LikeTweet({
       uid: id,
-      profileId: profileid,
+      profileId: new mongoose.Types.ObjectId(profileid),
       postid: postid,
     });
     const post = await liketweet.save();
@@ -636,7 +636,7 @@ router.post("/getAllPosts", async (req, res) => {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
-    const posts = await Image.find();
+    const posts = await Image.find().populate("profileId");
     if (posts) {
       res.json({ success: true, message: "Post fetched",posts:posts});
       return;
@@ -655,7 +655,7 @@ router.post("/getAllVideos", async (req, res) => {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
-    const videos = await Video.find();
+    const videos = await Video.find().populate("profileId");
     if (videos) {
       res.json({ success: true, message: "Post fetched",videos:videos});
       return;
@@ -674,7 +674,7 @@ router.post("/getAllTweets", async (req, res) => {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
-    const tweets = await Tweet.find();
+    const tweets = await Tweet.find().populate("profileId");
     if (tweets) {
       res.json({ success: true, message: "Post fetched",posts:tweets});
       return;
