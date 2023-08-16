@@ -631,17 +631,58 @@ router.post("/liketweet", Authuser, async (req, res) => {
 
 router.post("/getAllPosts", async (req, res) => {
   try {
-    const {secret} = req.body;
+    const { secret } = req.body;
     if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
     const posts = await Image.find();
-    console.log(posts);
-    res.json({ success: true, message: "Post fetched"});
-    return;
+    if (posts) {
+      res.json({ success: true, message: "Post fetched",posts:posts});
+      return;
+    }else{
+      res.json({ success: false, message: "Some error accured!"})
+    }
   } catch (error) {
-    res.json({success: false, message: "Some error accured!"});
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+router.post("/getAllVideos", async (req, res) => {
+  try {
+    const { secret } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const posts = await Video.find();
+    if (posts) {
+      res.json({ success: true, message: "Post fetched",posts:posts});
+      return;
+    }else{
+      res.json({ success: false, message: "Some error accured!"})
+    }
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+router.post("/getAllTweets", async (req, res) => {
+  try {
+    const { secret } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const posts = await Tweet.find();
+    if (posts) {
+      res.json({ success: true, message: "Post fetched",posts:posts});
+      return;
+    }else{
+      res.json({ success: false, message: "Some error accured!"})
+    }
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
     return;
   }
 });
