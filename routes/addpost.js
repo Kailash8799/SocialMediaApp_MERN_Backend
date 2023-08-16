@@ -655,9 +655,9 @@ router.post("/getAllVideos", async (req, res) => {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
-    const posts = await Video.find();
-    if (posts) {
-      res.json({ success: true, message: "Post fetched",posts:posts});
+    const videos = await Video.find();
+    if (videos) {
+      res.json({ success: true, message: "Post fetched",videos:videos});
       return;
     }else{
       res.json({ success: false, message: "Some error accured!"})
@@ -674,9 +674,9 @@ router.post("/getAllTweets", async (req, res) => {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
-    const posts = await Tweet.find();
-    if (posts) {
-      res.json({ success: true, message: "Post fetched",posts:posts});
+    const tweets = await Tweet.find();
+    if (tweets) {
+      res.json({ success: true, message: "Post fetched",posts:tweets});
       return;
     }else{
       res.json({ success: false, message: "Some error accured!"})
