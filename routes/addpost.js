@@ -559,7 +559,7 @@ router.post("/likevideo", Authuser, async (req, res) => {
     });
     const post = await likevideo.save();
     const likes = videopost?.likes;
-    const newlikes = [...likes, post?._id];
+    const newlikes = [...likes, id];
     await Video.updateOne(
       { $and: [{ _id: postid }, { uid: id }] },
       { $set: { likes: newlikes } },
@@ -614,7 +614,7 @@ router.post("/liketweet", Authuser, async (req, res) => {
     });
     const post = await liketweet.save();
     const likes = tweetpost?.likes;
-    const newlikes = [...likes, post?._id];
+    const newlikes = [...likes, id];
     await Tweet.updateOne(
       { $and: [{ _id: postid }, { uid: id }] },
       { $set: { likes: newlikes } },
