@@ -518,6 +518,58 @@ router.post("/likeimage", Authuser, async (req, res) => {
     return;
   }
 });
+
+router.post("/dislikeimage", Authuser, async (req, res) => {
+  try {
+    const { secret, token, postid } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { username, email, id, profileid } = decode;
+    const user = await User.find(
+      { $and: [{ username: username }, { email: email }, { _id: id }] },
+      { _id: 0, username: 0, email: 0, password: 0 }
+    );
+    if (user?.length === 0) {
+      res.json({
+        success: false,
+        message: "Please logout then login and try again!",
+      });
+      return;
+    }
+    const imagepost = await Image.findOne({
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+    });
+    if (imagepost === null) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const isLiked = await LikeImage.findOne({
+      $and: [{ postid: postid }, { uid: id }],
+    });
+    if (isLiked == null) {
+      res.json({ success: false, message: "Image is not liked" });
+      return;
+    }
+    await LikeImage.deleteMany({ _id: isLiked?._id });
+    const likes = imagepost?.likes;
+    const newlikes = likes.remove(id);
+    await Image.updateOne(
+      { $and: [{ _id: postid }, { uid: id }] },
+      { $set: { likes: newlikes } },
+      { new: true }
+    );
+    res.json({ success: true, message: "Disliked!" });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+
 router.post("/likevideo", Authuser, async (req, res) => {
   try {
     const { secret, token, postid } = req.body;
