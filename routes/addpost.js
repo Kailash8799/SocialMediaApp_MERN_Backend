@@ -504,7 +504,7 @@ router.post("/likeimage", Authuser, async (req, res) => {
     });
     const post = await likeimage.save();
     const likes = imagepost?.likes;
-    const newlikes = [...likes, post?._id];
+    const newlikes = [...likes, id];
     await Image.updateOne(
       { $and: [{ _id: postid }, { uid: id }] },
       { $set: { likes: newlikes } },
