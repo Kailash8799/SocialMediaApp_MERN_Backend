@@ -625,6 +625,58 @@ router.post("/likevideo", Authuser, async (req, res) => {
     return;
   }
 });
+
+router.post("/dislikevideo", Authuser, async (req, res) => {
+  try {
+    const { secret, token, postid } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { username, email, id, profileid } = decode;
+    const user = await User.find(
+      { $and: [{ username: username }, { email: email }, { _id: id }] },
+      { _id: 0, username: 0, email: 0, password: 0 }
+    );
+    if (user?.length === 0) {
+      res.json({
+        success: false,
+        message: "Please logout then login and try again!",
+      });
+      return;
+    }
+    const imagepost = await Video.findOne({
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+    });
+    if (imagepost === null) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const isLiked = await LikeVideo.findOne({
+      $and: [{ postid: postid }, { uid: id }],
+    });
+    if (isLiked == null) {
+      res.json({ success: false, message: "Image is not liked" });
+      return;
+    }
+    await LikeVideo.deleteMany({ _id: isLiked?._id });
+    const likes = imagepost?.likes;
+    const newlikes = likes.remove(id);
+    await Video.updateOne(
+      { $and: [{ _id: postid }, { uid: id }] },
+      { $set: { likes: newlikes } },
+      { new: true }
+    );
+    res.json({ success: true, message: "Disliked!" });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+
 router.post("/liketweet", Authuser, async (req, res) => {
   try {
     const { secret, token, postid } = req.body;
@@ -681,6 +733,57 @@ router.post("/liketweet", Authuser, async (req, res) => {
   }
 });
 
+router.post("/disliketweet", Authuser, async (req, res) => {
+  try {
+    const { secret, token, postid } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { username, email, id, profileid } = decode;
+    const user = await User.find(
+      { $and: [{ username: username }, { email: email }, { _id: id }] },
+      { _id: 0, username: 0, email: 0, password: 0 }
+    );
+    if (user?.length === 0) {
+      res.json({
+        success: false,
+        message: "Please logout then login and try again!",
+      });
+      return;
+    }
+    const imagepost = await Tweet.findOne({
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+    });
+    if (imagepost === null) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const isLiked = await LikeTweet.findOne({
+      $and: [{ postid: postid }, { uid: id }],
+    });
+    if (isLiked == null) {
+      res.json({ success: false, message: "Image is not liked" });
+      return;
+    }
+    await LikeTweet.deleteMany({ _id: isLiked?._id });
+    const likes = imagepost?.likes;
+    const newlikes = likes.remove(id);
+    await Tweet.updateOne(
+      { $and: [{ _id: postid }, { uid: id }] },
+      { $set: { likes: newlikes } },
+      { new: true }
+    );
+    res.json({ success: true, message: "Disliked!" });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+
 router.post("/getAllPosts", async (req, res) => {
   try {
     const { secret } = req.body;
@@ -729,6 +832,26 @@ router.post("/getAllTweets", async (req, res) => {
     const tweets = await Tweet.find().populate("profileId");
     if (tweets) {
       res.json({ success: true, message: "Post fetched",posts:tweets});
+      return;
+    }else{
+      res.json({ success: false, message: "Some error accured!"})
+    }
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+
+router.post("/getParticularpost", async (req, res) => {
+  try {
+    const { secret,id } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const image = await Image.findOne({_id:id}).populate("profileId");
+    if (image) {
+      res.json({ success: true, message: "Post fetched",posts:image});
       return;
     }else{
       res.json({ success: false, message: "Some error accured!"})
