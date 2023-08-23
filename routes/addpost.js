@@ -862,4 +862,65 @@ router.post("/getParticularpost", async (req, res) => {
   }
 });
 
+
+router.post("/fetchCommentonimage", async (req, res) => {
+  try {
+    const { secret,id } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const comment = await CommentOnImage.find({postid:id}).populate("profileId");
+    if (comment) {
+      res.json({ success: true, message: "Post fetched",comments:comment});
+      return;
+    }else{
+      res.json({ success: false, message: "Some error accured!"})
+    }
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+
+router.post("/fetchCommentonvideo", async (req, res) => {
+  try {
+    const { secret,id } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const comment = await CommentOnVideo.find({postid:id}).populate("profileId");
+    if (comment) {
+      res.json({ success: true, message: "Post fetched",comments:comment});
+      return;
+    }else{
+      res.json({ success: false, message: "Some error accured!"})
+    }
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+
+router.post("/fetchCommentontweet", async (req, res) => {
+  try {
+    const { secret,id } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const comment = await CommentOnTweet.find({postid:id}).populate("profileId");
+    if (comment) {
+      res.json({ success: true, message: "Post fetched",comments:comment});
+      return;
+    }else{
+      res.json({ success: false, message: "Some error accured!"})
+    }
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+
 module.exports = router;
