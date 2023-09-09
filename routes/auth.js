@@ -494,12 +494,13 @@ router.post("/getUser", Authuser, async (req, res) => {
 
 router.post("/getalluser", Authuser, async (req, res) => {
   try {
+    let { secret } = req.body;
     if (req.method !== "POST" || secret !== REACT_APP_SECRET) {
       res.json({ success: false, message: "Unauthorised" });
       return;
     }
     let users = await Profile.find();
-    res.json({ success: true, message: "Users",users });
+    res.json({ success: true, message: "Users", users });
     return;
   } catch (error) {
     res.json({ success: false, message: "Some error accured!" });
