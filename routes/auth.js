@@ -494,16 +494,14 @@ router.post("/getUser", Authuser, async (req, res) => {
 
 router.post("/followuser", Authuser, async (req, res) => {
   try {
-    let { userid, secret } = req.body;
+    let { userid, secret,token } = req.body;
     if (req.method !== "POST" || secret !== REACT_APP_SECRET) {
       res.json({ success: false, message: "Unauthorised" });
       return;
     }
     const decode = jwt.verify(token, JWT_SECRET);
     const { profileid } = decode;
-    const uprofile = await Profile.findOne({
-      $and: [{ _id: profileid }],
-    });
+    const uprofile = await Profile.findOne({_id: profileid });
     let follower = new Set(uprofile?.followers);
     follower.add(userid);
     let followers = Array.from(follower);
@@ -521,7 +519,29 @@ router.post("/followuser", Authuser, async (req, res) => {
 });
 
 router.post("/unfollowuser", Authuser, async (req, res) => {
-  res.json({ success: true, message: "You are logged in" });
+  try {
+    let { userid, secret,token } = req.body;
+    if (req.method !== "POST" || secret !== REACT_APP_SECRET) {
+      res.json({ success: false, message: "Unauthorised" });
+      return;
+    }
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { profileid } = decode;
+    const uprofile = await Profile.findOne({_id: profileid });
+    let follower = new Set(uprofile?.followers);
+    follower.delete(userid);
+    let followers = Array.from(follower);
+    await Profile.updateOne(
+      { $and: [{ _id: profileid }] },
+      { $set: { followers: followers } },
+      { new: true }
+    );
+    res.json({ success: true, message: "UnFollowed" });
+    return;
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
 });
 
 router.post("/getalluser", Authuser, async (req, res) => {
