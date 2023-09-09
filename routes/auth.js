@@ -546,13 +546,16 @@ router.post("/unfollowuser", Authuser, async (req, res) => {
 
 router.post("/getalluser", Authuser, async (req, res) => {
   try {
-    let { secret } = req.body;
+    let { secret,token } = req.body;
     if (req.method !== "POST" || secret !== REACT_APP_SECRET) {
       res.json({ success: false, message: "Unauthorised" });
       return;
     }
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { profileid } = decode;
     let users = await Profile.find();
-    res.json({ success: true, message: "Users", users });
+    let profile = await Profile.findOne({_id: profileid });
+    res.json({ success: true, message: "Users", users, profile });
     return;
   } catch (error) {
     res.json({ success: false, message: "Some error accured!" });
