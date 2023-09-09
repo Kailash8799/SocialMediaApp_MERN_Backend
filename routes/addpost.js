@@ -872,7 +872,7 @@ router.post("/fetchCommentonimage", async (req, res) => {
     }
     const comment = await CommentOnImage.find({postid:id}).populate("profileId");
     if (comment) {
-      res.json({ success: true, message: "Post fetched",comments:comment});
+      res.json({ success: true, message: "Comment fetched",comments:comment});
       return;
     }else{
       res.json({ success: false, message: "Some error accured!"})

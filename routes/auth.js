@@ -469,8 +469,8 @@ router.post("/verifyuser", async (req, res) => {
     );
     const prof = new Profile({
       userid: user[0]?._id,
-      username:user[0]?.username,
-      useremail:user[0]?.email
+      username: user[0]?.username,
+      useremail: user[0]?.email,
     });
     await prof.save();
     res.json({
@@ -491,6 +491,22 @@ router.post("/forgotpassword", async (req, res) => {
 router.post("/getUser", Authuser, async (req, res) => {
   res.json({ success: true, message: "You are logged in" });
 });
+
+router.post("/getalluser", Authuser, async (req, res) => {
+  try {
+    if (req.method !== "POST" || secret !== REACT_APP_SECRET) {
+      res.json({ success: false, message: "Unauthorised" });
+      return;
+    }
+    let users = await Profile.find();
+    res.json({ success: true, message: "Users",users });
+    return;
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+
 router.post("/updateUser", async (req, res) => {
   res.json({ success: true, message: "Forgot Password successfully" });
 });
