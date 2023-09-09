@@ -512,7 +512,7 @@ router.post("/followuser", Authuser, async (req, res) => {
       { $set: { followers: followers } },
       { new: true }
     );
-    res.json({ success: true, message: "Users" });
+    res.json({ success: true, message: "Followed" });
     return;
   } catch (error) {
     res.json({ success: false, message: "Some error accured!" });
