@@ -491,7 +491,7 @@ router.post("/likeimage", Authuser, async (req, res) => {
       return;
     }
     const isLiked = await LikeImage.findOne({
-      $and: [{ postid: postid }],
+      $and: [{ postid: postid, uid: id }],
     });
     if (isLiked != null) {
       res.json({ success: false, message: "Allready liked" });
@@ -540,7 +540,7 @@ router.post("/dislikeimage", Authuser, async (req, res) => {
       return;
     }
     const imagepost = await Image.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid), uid: id }],
     });
     if (imagepost === null) {
       res.json({ success: false, message: "Some error accured!" });
@@ -591,7 +591,7 @@ router.post("/likevideo", Authuser, async (req, res) => {
       return;
     }
     const videopost = await Video.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid), uid: id }],
     });
     if (videopost === null) {
       res.json({ success: false, message: "Some error accured!" });
@@ -647,7 +647,7 @@ router.post("/dislikevideo", Authuser, async (req, res) => {
       return;
     }
     const imagepost = await Video.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid), uid: id }],
     });
     if (imagepost === null) {
       res.json({ success: false, message: "Some error accured!" });
@@ -698,7 +698,7 @@ router.post("/liketweet", Authuser, async (req, res) => {
       return;
     }
     const tweetpost = await Tweet.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid), uid: id }],
     });
     if (tweetpost === null) {
       res.json({ success: false, message: "Some error accured!" });
@@ -754,7 +754,7 @@ router.post("/disliketweet", Authuser, async (req, res) => {
       return;
     }
     const imagepost = await Tweet.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid), uid: id }],
     });
     if (imagepost === null) {
       res.json({ success: false, message: "Some error accured!" });
@@ -786,7 +786,7 @@ router.post("/disliketweet", Authuser, async (req, res) => {
 
 router.post("/getAllPosts", async (req, res) => {
   try {
-    const { secret,token } = req.body;
+    const { secret, token } = req.body;
     if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
       res.json({ success: false, message: "Some error accured!" });
       return;
@@ -796,7 +796,12 @@ router.post("/getAllPosts", async (req, res) => {
     const profile = await Profile.findOne({ _id: profileid });
     const posts = await Image.find().populate("profileId");
     if (posts) {
-      res.json({ success: true, message: "Post fetched", posts: posts,profile });
+      res.json({
+        success: true,
+        message: "Post fetched",
+        posts: posts,
+        profile,
+      });
       return;
     } else {
       res.json({ success: false, message: "Some error accured!" });
@@ -808,7 +813,7 @@ router.post("/getAllPosts", async (req, res) => {
 });
 router.post("/getAllVideos", async (req, res) => {
   try {
-    const { secret,token } = req.body;
+    const { secret, token } = req.body;
     if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
       res.json({ success: false, message: "Some error accured!" });
       return;
@@ -819,7 +824,12 @@ router.post("/getAllVideos", async (req, res) => {
     const videos = await Video.find().populate("profileId");
 
     if (videos) {
-      res.json({ success: true, message: "Post fetched", videos: videos,profile });
+      res.json({
+        success: true,
+        message: "Post fetched",
+        videos: videos,
+        profile,
+      });
       return;
     } else {
       res.json({ success: false, message: "Some error accured!" });
@@ -831,7 +841,7 @@ router.post("/getAllVideos", async (req, res) => {
 });
 router.post("/getAllTweets", async (req, res) => {
   try {
-    const { secret,token } = req.body;
+    const { secret, token } = req.body;
     if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
       res.json({ success: false, message: "Some error accured!" });
       return;
@@ -841,7 +851,12 @@ router.post("/getAllTweets", async (req, res) => {
     const profile = await Profile.findOne({ _id: profileid });
     const tweets = await Tweet.find().populate("profileId");
     if (tweets) {
-      res.json({ success: true, message: "Post fetched", posts: tweets,profile });
+      res.json({
+        success: true,
+        message: "Post fetched",
+        posts: tweets,
+        profile,
+      });
       return;
     } else {
       res.json({ success: false, message: "Some error accured!" });
