@@ -484,7 +484,7 @@ router.post("/likeimage", Authuser, async (req, res) => {
       return;
     }
     const imagepost = await Image.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid)}],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
     if (imagepost === null) {
       res.json({ success: false, message: "Some error accured!😒" });
@@ -786,14 +786,17 @@ router.post("/disliketweet", Authuser, async (req, res) => {
 
 router.post("/getAllPosts", async (req, res) => {
   try {
-    const { secret } = req.body;
+    const { secret,token } = req.body;
     if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { profileid } = decode;
+    const profile = await Profile.findOne({ _id: profileid });
     const posts = await Image.find().populate("profileId");
     if (posts) {
-      res.json({ success: true, message: "Post fetched", posts: posts });
+      res.json({ success: true, message: "Post fetched", posts: posts,profile });
       return;
     } else {
       res.json({ success: false, message: "Some error accured!" });
@@ -805,14 +808,18 @@ router.post("/getAllPosts", async (req, res) => {
 });
 router.post("/getAllVideos", async (req, res) => {
   try {
-    const { secret } = req.body;
+    const { secret,token } = req.body;
     if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { profileid } = decode;
+    const profile = await Profile.findOne({ _id: profileid });
     const videos = await Video.find().populate("profileId");
+
     if (videos) {
-      res.json({ success: true, message: "Post fetched", videos: videos });
+      res.json({ success: true, message: "Post fetched", videos: videos,profile });
       return;
     } else {
       res.json({ success: false, message: "Some error accured!" });
@@ -824,14 +831,17 @@ router.post("/getAllVideos", async (req, res) => {
 });
 router.post("/getAllTweets", async (req, res) => {
   try {
-    const { secret } = req.body;
+    const { secret,token } = req.body;
     if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { profileid } = decode;
+    const profile = await Profile.findOne({ _id: profileid });
     const tweets = await Tweet.find().populate("profileId");
     if (tweets) {
-      res.json({ success: true, message: "Post fetched", posts: tweets });
+      res.json({ success: true, message: "Post fetched", posts: tweets,profile });
       return;
     } else {
       res.json({ success: false, message: "Some error accured!" });
