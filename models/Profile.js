@@ -6,6 +6,7 @@ const ProfileSchema = mongoose.Schema({
     useremail:{type:String,required:true,unique:true},
     followers:{type:Array},
     following:{type:Array},
+    savedpost:{type:Array},
     videos:{type:Array},
     profileImage:{type:String},
     tweets:{type:Array},
