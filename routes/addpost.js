@@ -760,6 +760,7 @@ router.post("/getAllPosts", async (req, res) => {
     return;
   }
 });
+
 router.post("/getAllVideos", async (req, res) => {
   try {
     const { secret, token } = req.body;
@@ -788,6 +789,7 @@ router.post("/getAllVideos", async (req, res) => {
     return;
   }
 });
+
 router.post("/getAllTweets", async (req, res) => {
   try {
     const { secret, token } = req.body;
