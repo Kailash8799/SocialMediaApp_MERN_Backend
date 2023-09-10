@@ -500,7 +500,7 @@ router.post("/getUser", Authuser, async (req, res) => {
     let profile = await Profile.findOne({ _id: profileid });
     res.json({ success: true, message: "You are logged in", profile });
   } catch (error) {
-    
+
     res.json({ success: false, message: "Some error accured!" });
   }
 });
