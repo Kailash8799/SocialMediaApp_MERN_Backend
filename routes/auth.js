@@ -502,7 +502,7 @@ router.post("/followuser", Authuser, async (req, res) => {
     const decode = jwt.verify(token, JWT_SECRET);
     const { profileid } = decode;
     const uprofile = await Profile.findOne({_id: profileid });
-    const followingprofile = await Profile.findOne({_id: id });
+    const followingprofile = await Profile.findOne({_id: userid });
 
     let follower = new Set(followingprofile?.followers);
     follower.add(profileid);
@@ -517,7 +517,7 @@ router.post("/followuser", Authuser, async (req, res) => {
       { $set: { following: followings } },
       { new: true }
     );
-
+    
     await Profile.updateOne(
       { $and: [{ _id: userid }] },
       { $set: { followers: followers } },
@@ -541,7 +541,7 @@ router.post("/unfollowuser", Authuser, async (req, res) => {
     const decode = jwt.verify(token, JWT_SECRET);
     const { profileid } = decode;
     const uprofile = await Profile.findOne({_id: profileid });
-    const followingprofile = await Profile.findOne({_id: id });
+    const followingprofile = await Profile.findOne({_id: userid });
 
     let follower = new Set(followingprofile?.followers);
     follower.delete(profileid);
