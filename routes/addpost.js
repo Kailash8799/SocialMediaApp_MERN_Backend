@@ -487,7 +487,7 @@ router.post("/likeimage", Authuser, async (req, res) => {
       $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
     });
     if (imagepost === null) {
-      res.json({ success: false, message: "Some error accured!" });
+      res.json({ success: false, message: "Some error accured!😒" });
       return;
     }
     const isLiked = await LikeImage.findOne({
