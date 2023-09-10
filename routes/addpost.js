@@ -544,7 +544,7 @@ router.post("/dislikeimage", Authuser, async (req, res) => {
       { $set: { likes: alllikes } },
       { new: true }
     );
-    res.json({ success: true, message: "Liked!" });
+    res.json({ success: true, message: "Disliked!" });
     return;
   } catch (error) {
     console.log(error);
@@ -634,7 +634,7 @@ router.post("/dislikevideo", Authuser, async (req, res) => {
       { $set: { likes: alllikes } },
       { new: true }
     );
-    res.json({ success: true, message: "Liked!" });
+    res.json({ success: true, message: "Disliked!" });
     return;
   } catch (error) {
     console.log(error);
@@ -724,7 +724,7 @@ router.post("/disliketweet", Authuser, async (req, res) => {
       { $set: { likes: alllikes } },
       { new: true }
     );
-    res.json({ success: true, message: "Liked!" });
+    res.json({ success: true, message: "Disliked!" });
     return;
   } catch (error) {
     console.log(error);
