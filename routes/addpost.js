@@ -335,7 +335,7 @@ router.post("/postimagecomment", Authuser, async (req, res) => {
       return;
     }
     const imagepost = await Image.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
     if (imagepost === null) {
       res.json({ success: false, message: "Some error accured!" });
@@ -351,7 +351,7 @@ router.post("/postimagecomment", Authuser, async (req, res) => {
     const comments = imagepost?.comments;
     const newComments = [...comments, post?._id];
     await Image.updateOne(
-      { $and: [{ _id: postid }, { uid: id }] },
+      { $and: [{ _id: postid }] },
       { $set: { comments: newComments } },
       { new: true }
     );
@@ -384,7 +384,7 @@ router.post("/postvideocomment", Authuser, async (req, res) => {
     }
 
     const videopost = await Video.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
 
     if (videopost === null) {
@@ -402,7 +402,7 @@ router.post("/postvideocomment", Authuser, async (req, res) => {
     const comments = videopost?.comments;
     const newComments = [...comments, post?._id];
     await Video.updateOne(
-      { $and: [{ _id: postid }, { uid: id }] },
+      { $and: [{ _id: postid }] },
       { $set: { comments: newComments } },
       { new: true }
     );
@@ -434,7 +434,7 @@ router.post("/posttextcomment", Authuser, async (req, res) => {
       return;
     }
     const textpost = await Tweet.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
 
     if (textpost === null) {
@@ -452,7 +452,7 @@ router.post("/posttextcomment", Authuser, async (req, res) => {
     const comments = textpost?.comments;
     const newComments = [...comments, post?._id];
     await Tweet.updateOne(
-      { $and: [{ _id: postid }, { uid: id }] },
+      { $and: [{ _id: postid }] },
       { $set: { comments: newComments } },
       { new: true }
     );
@@ -591,14 +591,14 @@ router.post("/likevideo", Authuser, async (req, res) => {
       return;
     }
     const videopost = await Video.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
     if (videopost === null) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
     const isLiked = await LikeVideo.findOne({
-      $and: [{ postid: postid }, { uid: id }],
+      $and: [{ postid: postid }],
     });
     if (isLiked != null) {
       res.json({ success: false, message: "Allready liked" });
@@ -613,7 +613,7 @@ router.post("/likevideo", Authuser, async (req, res) => {
     const likes = videopost?.likes;
     const newlikes = [...likes, id];
     await Video.updateOne(
-      { $and: [{ _id: postid }, { uid: id }] },
+      { $and: [{ _id: postid }] },
       { $set: { likes: newlikes } },
       { new: true }
     );
@@ -647,14 +647,14 @@ router.post("/dislikevideo", Authuser, async (req, res) => {
       return;
     }
     const imagepost = await Video.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
     if (imagepost === null) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
     const isLiked = await LikeVideo.findOne({
-      $and: [{ postid: postid }, { uid: id }],
+      $and: [{ postid: postid }],
     });
     if (isLiked == null) {
       res.json({ success: false, message: "Image is not liked" });
@@ -664,7 +664,7 @@ router.post("/dislikevideo", Authuser, async (req, res) => {
     const likes = imagepost?.likes;
     const newlikes = likes.remove(id);
     await Video.updateOne(
-      { $and: [{ _id: postid }, { uid: id }] },
+      { $and: [{ _id: postid }] },
       { $set: { likes: newlikes } },
       { new: true }
     );
@@ -698,14 +698,14 @@ router.post("/liketweet", Authuser, async (req, res) => {
       return;
     }
     const tweetpost = await Tweet.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
     if (tweetpost === null) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
     const isLiked = await LikeTweet.findOne({
-      $and: [{ postid: postid }, { uid: id }],
+      $and: [{ postid: postid }],
     });
     if (isLiked != null) {
       res.json({ success: false, message: "Allready liked" });
@@ -720,7 +720,7 @@ router.post("/liketweet", Authuser, async (req, res) => {
     const likes = tweetpost?.likes;
     const newlikes = [...likes, id];
     await Tweet.updateOne(
-      { $and: [{ _id: postid }, { uid: id }] },
+      { $and: [{ _id: postid }] },
       { $set: { likes: newlikes } },
       { new: true }
     );
@@ -754,14 +754,14 @@ router.post("/disliketweet", Authuser, async (req, res) => {
       return;
     }
     const imagepost = await Tweet.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
     if (imagepost === null) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
     const isLiked = await LikeTweet.findOne({
-      $and: [{ postid: postid }, { uid: id }],
+      $and: [{ postid: postid }],
     });
     if (isLiked == null) {
       res.json({ success: false, message: "Image is not liked" });
@@ -771,7 +771,7 @@ router.post("/disliketweet", Authuser, async (req, res) => {
     const likes = imagepost?.likes;
     const newlikes = likes.remove(id);
     await Tweet.updateOne(
-      { $and: [{ _id: postid }, { uid: id }] },
+      { $and: [{ _id: postid }] },
       { $set: { likes: newlikes } },
       { new: true }
     );
