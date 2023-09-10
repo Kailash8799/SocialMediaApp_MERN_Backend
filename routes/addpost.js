@@ -487,27 +487,16 @@ router.post("/likeimage", Authuser, async (req, res) => {
       $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
     if (imagepost === null) {
-      res.json({ success: false, message: "Some error accured!😒" });
+      res.json({ success: false, message: "Some error accured!" });
       return;
     }
-    const isLiked = await LikeImage.findOne({
-      $and: [{ postid: postid, uid: id }],
-    });
-    if (isLiked != null) {
-      res.json({ success: false, message: "Allready liked" });
-      return;
-    }
-    let likeimage = new LikeImage({
-      uid: id,
-      profileId: new mongoose.Types.ObjectId(profileid),
-      postid: postid,
-    });
-    const post = await likeimage.save();
-    const likes = imagepost?.likes;
-    const newlikes = [...likes, id];
+    let likes = new Set(imagepost?.likes);
+    likes.add(id);
+    let alllikes = Array.from(likes);
+
     await Image.updateOne(
       { $and: [{ _id: postid }] },
-      { $set: { likes: newlikes } },
+      { $set: { likes: alllikes } },
       { new: true }
     );
     res.json({ success: true, message: "Liked!" });
@@ -540,28 +529,22 @@ router.post("/dislikeimage", Authuser, async (req, res) => {
       return;
     }
     const imagepost = await Image.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid), uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
     if (imagepost === null) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
-    const isLiked = await LikeImage.findOne({
-      $and: [{ postid: postid }],
-    });
-    if (isLiked == null) {
-      res.json({ success: false, message: "Image is not liked" });
-      return;
-    }
-    await LikeImage.deleteMany({ _id: isLiked?._id });
-    const likes = imagepost?.likes;
-    const newlikes = likes.remove(id);
+    let likes = new Set(imagepost?.likes);
+    likes.delete(id);
+    let alllikes = Array.from(likes);
+
     await Image.updateOne(
       { $and: [{ _id: postid }] },
-      { $set: { likes: newlikes } },
+      { $set: { likes: alllikes } },
       { new: true }
     );
-    res.json({ success: true, message: "Disliked!" });
+    res.json({ success: true, message: "Liked!" });
     return;
   } catch (error) {
     console.log(error);
@@ -591,30 +574,19 @@ router.post("/likevideo", Authuser, async (req, res) => {
       return;
     }
     const videopost = await Video.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid), uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
     if (videopost === null) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
-    const isLiked = await LikeVideo.findOne({
-      $and: [{ postid: postid }],
-    });
-    if (isLiked != null) {
-      res.json({ success: false, message: "Allready liked" });
-      return;
-    }
-    let likevideo = new LikeVideo({
-      uid: id,
-      profileId: new mongoose.Types.ObjectId(profileid),
-      postid: postid,
-    });
-    const post = await likevideo.save();
-    const likes = videopost?.likes;
-    const newlikes = [...likes, id];
+    let likes = new Set(videopost?.likes);
+    likes.add(id);
+    let alllikes = Array.from(likes);
+
     await Video.updateOne(
       { $and: [{ _id: postid }] },
-      { $set: { likes: newlikes } },
+      { $set: { likes: alllikes } },
       { new: true }
     );
     res.json({ success: true, message: "Liked!" });
@@ -646,29 +618,23 @@ router.post("/dislikevideo", Authuser, async (req, res) => {
       });
       return;
     }
-    const imagepost = await Video.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid), uid: id }],
+    const videopost = await Video.findOne({
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
-    if (imagepost === null) {
+    if (videopost === null) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
-    const isLiked = await LikeVideo.findOne({
-      $and: [{ postid: postid }],
-    });
-    if (isLiked == null) {
-      res.json({ success: false, message: "Image is not liked" });
-      return;
-    }
-    await LikeVideo.deleteMany({ _id: isLiked?._id });
-    const likes = imagepost?.likes;
-    const newlikes = likes.remove(id);
+    let likes = new Set(videopost?.likes);
+    likes.delete(id);
+    let alllikes = Array.from(likes);
+
     await Video.updateOne(
       { $and: [{ _id: postid }] },
-      { $set: { likes: newlikes } },
+      { $set: { likes: alllikes } },
       { new: true }
     );
-    res.json({ success: true, message: "Disliked!" });
+    res.json({ success: true, message: "Liked!" });
     return;
   } catch (error) {
     console.log(error);
@@ -698,30 +664,19 @@ router.post("/liketweet", Authuser, async (req, res) => {
       return;
     }
     const tweetpost = await Tweet.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid), uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
     if (tweetpost === null) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
-    const isLiked = await LikeTweet.findOne({
-      $and: [{ postid: postid }],
-    });
-    if (isLiked != null) {
-      res.json({ success: false, message: "Allready liked" });
-      return;
-    }
-    let liketweet = new LikeTweet({
-      uid: id,
-      profileId: new mongoose.Types.ObjectId(profileid),
-      postid: postid,
-    });
-    const post = await liketweet.save();
-    const likes = tweetpost?.likes;
-    const newlikes = [...likes, id];
+    let likes = new Set(tweetpost?.likes);
+    likes.add(id);
+    let alllikes = Array.from(likes);
+
     await Tweet.updateOne(
       { $and: [{ _id: postid }] },
-      { $set: { likes: newlikes } },
+      { $set: { likes: alllikes } },
       { new: true }
     );
     res.json({ success: true, message: "Liked!" });
@@ -753,29 +708,23 @@ router.post("/disliketweet", Authuser, async (req, res) => {
       });
       return;
     }
-    const imagepost = await Tweet.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid), uid: id }],
+    const tweetpost = await Tweet.findOne({
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
-    if (imagepost === null) {
+    if (tweetpost === null) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
-    const isLiked = await LikeTweet.findOne({
-      $and: [{ postid: postid }],
-    });
-    if (isLiked == null) {
-      res.json({ success: false, message: "Image is not liked" });
-      return;
-    }
-    await LikeTweet.deleteMany({ _id: isLiked?._id });
-    const likes = imagepost?.likes;
-    const newlikes = likes.remove(id);
+    let likes = new Set(tweetpost?.likes);
+    likes.delete(id);
+    let alllikes = Array.from(likes);
+
     await Tweet.updateOne(
       { $and: [{ _id: postid }] },
-      { $set: { likes: newlikes } },
+      { $set: { likes: alllikes } },
       { new: true }
     );
-    res.json({ success: true, message: "Disliked!" });
+    res.json({ success: true, message: "Liked!" });
     return;
   } catch (error) {
     console.log(error);
