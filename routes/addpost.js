@@ -484,14 +484,14 @@ router.post("/likeimage", Authuser, async (req, res) => {
       return;
     }
     const imagepost = await Image.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid)}],
     });
     if (imagepost === null) {
       res.json({ success: false, message: "Some error accured!😒" });
       return;
     }
     const isLiked = await LikeImage.findOne({
-      $and: [{ postid: postid }, { uid: id }],
+      $and: [{ postid: postid }],
     });
     if (isLiked != null) {
       res.json({ success: false, message: "Allready liked" });
@@ -506,7 +506,7 @@ router.post("/likeimage", Authuser, async (req, res) => {
     const likes = imagepost?.likes;
     const newlikes = [...likes, id];
     await Image.updateOne(
-      { $and: [{ _id: postid }, { uid: id }] },
+      { $and: [{ _id: postid }] },
       { $set: { likes: newlikes } },
       { new: true }
     );
@@ -540,14 +540,14 @@ router.post("/dislikeimage", Authuser, async (req, res) => {
       return;
     }
     const imagepost = await Image.findOne({
-      $and: [{ _id: new mongoose.Types.ObjectId(postid) }, { uid: id }],
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
     });
     if (imagepost === null) {
       res.json({ success: false, message: "Some error accured!" });
       return;
     }
     const isLiked = await LikeImage.findOne({
-      $and: [{ postid: postid }, { uid: id }],
+      $and: [{ postid: postid }],
     });
     if (isLiked == null) {
       res.json({ success: false, message: "Image is not liked" });
@@ -557,7 +557,7 @@ router.post("/dislikeimage", Authuser, async (req, res) => {
     const likes = imagepost?.likes;
     const newlikes = likes.remove(id);
     await Image.updateOne(
-      { $and: [{ _id: postid }, { uid: id }] },
+      { $and: [{ _id: postid }] },
       { $set: { likes: newlikes } },
       { new: true }
     );
