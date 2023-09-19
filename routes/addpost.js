@@ -970,16 +970,18 @@ router.post("/unsaved", Authuser, async (req, res) => {
 
 router.post("/uploadImage", async (req, res) => {
   try {
-    let file = req.files;
-    console.log(file.undefined.tempFilePath);
+    let {file} = req.body;
+    // console.log(file);
     const options = {
+      upload_preset:'socialmediapp',
       use_filename: true,
       unique_filename: false,
       overwrite: true,
+      
     };
     try {
       // Upload the image
-      const result = await cloudinary.uploader.upload(file.undefined.tempFilePath, options);
+      const result = await cloudinary.uploader.upload(file, options);
       if(result?.public_id != null && result?.url != null){
         res.json({ success: true, message: "Image uploaded",url:result?.url });
         return;
@@ -991,6 +993,7 @@ router.post("/uploadImage", async (req, res) => {
     res.json({ success: false, message: "Image not uploaded" });
     return;
   } catch (error) {
+    console.log(error);
     res.json({ success: false, message: "Some error accured!" });
     return;
   }
