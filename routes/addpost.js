@@ -977,7 +977,6 @@ router.post("/uploadImage", async (req, res) => {
       use_filename: true,
       unique_filename: false,
       overwrite: true,
-      
     };
     try {
       // Upload the image
@@ -998,5 +997,39 @@ router.post("/uploadImage", async (req, res) => {
     return;
   }
 });
+
+router.post("/uploadVideo", async (req, res) => {
+  try {
+    let {file} = req.body;
+    // console.log(file);
+    const options = {
+      resource_type: "video", 
+      upload_preset:'socialmediaappvideo',
+      use_filename: true,
+      unique_filename: false,
+      overwrite: true,
+      eager_async: true,
+    };
+    try {
+      // Upload the image
+      const result = await cloudinary.uploader.upload(file, options);
+      if(result?.public_id != null && result?.url != null){
+        res.json({ success: true, message: "Image uploaded",url:result?.url });
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    res.json({ success: false, message: "Image not uploaded" });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+
+
 
 module.exports = router;
