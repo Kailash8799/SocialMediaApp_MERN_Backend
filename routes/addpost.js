@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const app = express();
 var AES_SECRET = process.env.AES_SECRET;
 const nodemailer = require("nodemailer");
 const REACT_APP_URL = process.env.REACT_APP_LOCALHOST;
@@ -19,6 +20,8 @@ const LikeImage = require("../models/LikeImage");
 const { default: mongoose } = require("mongoose");
 const LikeVideo = require("../models/LikeVideo");
 const LikeTweet = require("../models/LikeTweet");
+const fileUpload = require('express-fileupload');
+const cloudinary = require('cloudinary').v2;
 
 router.post("/postimage", Authuser, async (req, res) => {
   try {
@@ -965,6 +968,32 @@ router.post("/unsaved", Authuser, async (req, res) => {
   }
 });
 
+router.post("/uploadImage", async (req, res) => {
+  try {
+    let file = req.files;
+    console.log(file.undefined.tempFilePath);
+    const options = {
+      use_filename: true,
+      unique_filename: false,
+      overwrite: true,
+    };
+    try {
+      // Upload the image
+      const result = await cloudinary.uploader.upload(file.undefined.tempFilePath, options);
+      if(result?.public_id != null && result?.url != null){
+        res.json({ success: true, message: "Image uploaded",url:result?.url });
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    }
 
+    res.json({ success: false, message: "Image not uploaded" });
+    return;
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
 
 module.exports = router;
