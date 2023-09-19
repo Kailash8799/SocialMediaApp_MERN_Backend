@@ -500,7 +500,6 @@ router.post("/getUser", Authuser, async (req, res) => {
     let profile = await Profile.findOne({ _id: profileid });
     res.json({ success: true, message: "You are logged in", profile });
   } catch (error) {
-
     res.json({ success: false, message: "Some error accured!" });
   }
 });
@@ -604,6 +603,40 @@ router.post("/getalluser", Authuser, async (req, res) => {
 
 router.post("/updateUser", async (req, res) => {
   res.json({ success: true, message: "Forgot Password successfully" });
+});
+
+router.post("/getFollowers", Authuser, async (req, res) => {
+  try {
+    let { secret, token } = req.body;
+    if (req.method !== "POST" || secret !== REACT_APP_SECRET) {
+      res.json({ success: false, message: "Unauthorised" });
+      return;
+    }
+
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { profileid } = decode;
+    const uprofile = await Profile.findOne({ _id: profileid });
+
+    let followersfollowingprof = [];
+    for (let index = 0; index < uprofile?.following?.length; index++) {
+      if (uprofile?.followers?.includes(uprofile?.following[index])) {
+        const uprofilefind = await Profile.findOne({ _id: uprofile?.following[index] });
+        if (uprofilefind != null) {
+        console.log(uprofilefind);
+          followersfollowingprof.push(uprofilefind);
+        }
+      }
+    }
+    res.json({
+      success: true,
+      message: "Profiles!",
+      profiles: followersfollowingprof,
+    });
+    return;
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
 });
 
 module.exports = router;
