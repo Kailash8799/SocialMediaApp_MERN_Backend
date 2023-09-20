@@ -14,6 +14,7 @@ cloudinary.config({
     api_secret:'3vN7RTWhEOGYW-Po7LauxGOSN8g',
     secure: true
   });
+  
 app.use(router)
 app.use(cors())
 app.use(bodyParser.json({limit: '50mb'}));

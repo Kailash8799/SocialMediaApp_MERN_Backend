@@ -982,7 +982,7 @@ router.post("/uploadImage", async (req, res) => {
       // Upload the image
       const result = await cloudinary.uploader.upload(file, options);
       if(result?.public_id != null && result?.url != null){
-        res.json({ success: true, message: "Image uploaded",url:result?.url });
+        res.json({ success: true, message: "Image uploaded",url:result?.secure_url });
         return;
       }
     } catch (error) {
