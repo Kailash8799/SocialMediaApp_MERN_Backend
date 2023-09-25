@@ -22,6 +22,8 @@ const LikeVideo = require("../models/LikeVideo");
 const LikeTweet = require("../models/LikeTweet");
 const fileUpload = require('express-fileupload');
 const cloudinary = require('cloudinary').v2;
+const multer = require("multer");
+const path = require("path");
 
 router.post("/postimage", Authuser, async (req, res) => {
   try {
@@ -69,6 +71,15 @@ router.post("/postimage", Authuser, async (req, res) => {
     return;
   }
 });
+
+async function deleteFile(imageurl) {
+  try {
+      let public_id = imageurl.split("/").pop().split(".")[0];
+      let deleted = await cloudinary.uploader.destroy(public_id);
+  } catch (err) {
+      console.log(err);
+  }
+}
 
 router.post("/deleteimage", Authuser, async (req, res) => {
   try {
@@ -968,10 +979,10 @@ router.post("/unsaved", Authuser, async (req, res) => {
   }
 });
 
-router.post("/uploadImage", async (req, res) => {
+router.post("/uploadImage", multer({ storage: multer.diskStorage({}) }).single("file"),
+async (req, res) => {
   try {
-    let {file} = req.body;
-    // console.log(file);
+    let file = req.file.path;
     const options = {
       upload_preset:'socialmediapp',
       use_filename: true,
@@ -988,7 +999,6 @@ router.post("/uploadImage", async (req, res) => {
     } catch (error) {
       console.error(error);
     }
-
     res.json({ success: false, message: "Image not uploaded" });
     return;
   } catch (error) {
@@ -998,10 +1008,9 @@ router.post("/uploadImage", async (req, res) => {
   }
 });
 
-router.post("/uploadVideo", async (req, res) => {
+router.post("/uploadVideo",multer({ storage: multer.diskStorage({}) }).single("file"), async (req, res) => {
   try {
-    let {file} = req.body;
-    // console.log(file);
+    let file = req.file.path;
     const options = {
       resource_type: "video", 
       upload_preset:'socialmediaappvideo',
@@ -1011,7 +1020,6 @@ router.post("/uploadVideo", async (req, res) => {
       eager_async: true,
     };
     try {
-      // Upload the image
       const result = await cloudinary.uploader.upload(file, options);
       if(result?.public_id != null && result?.url != null){
         res.json({ success: true, message: "Image uploaded",url:result?.secure_url });
