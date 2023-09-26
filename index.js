@@ -1,6 +1,5 @@
 const express = require('express');
 const cloudinary = require('cloudinary').v2;
-const fileUpload = require('express-fileupload');
 const app = express()
 const ConnectDb = require("./_db")
 const router = express.Router()
@@ -16,7 +15,7 @@ cloudinary.config({
   });
   
 app.use(router)
-app.use(cors())
+app.use(cors({origin:"https://linkagenetwork.vercel.app",methods:["GET","POST"]}))
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,6 +24,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 ConnectDb()
 app.use("/api/auth",require("./routes/auth"))
 app.use("/api/addpost",require("./routes/addpost"))
+app.use("/api/chat",require("./routes/chat"))
 // app.use("/api/order",require("./routes/order"))
 
 app.listen(PORT,()=>{
