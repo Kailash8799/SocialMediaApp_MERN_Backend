@@ -25,6 +25,13 @@ const cloudinary = require('cloudinary').v2;
 const multer = require("multer");
 const path = require("path");
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://linkagenetwork.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
 router.post("/postimage", Authuser, async (req, res) => {
   try {
     const { secret, token, imageLink, tagged, caption, hashtags } = req.body;
