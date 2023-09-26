@@ -878,7 +878,7 @@ router.post("/getParticularVideopost", async (req, res) => {
     return;
   }
 });
-router.post("/getParticularTweetpost", async (req, res) => {
+router.post("/getparticulartweetpost", async (req, res) => {
   try {
     const { secret, id } = req.body;
     if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
