@@ -622,7 +622,6 @@ router.post("/getFollowers", Authuser, async (req, res) => {
       if (uprofile?.followers?.includes(uprofile?.following[index])) {
         const uprofilefind = await Profile.findOne({ _id: uprofile?.following[index] });
         if (uprofilefind != null) {
-        console.log(uprofilefind);
           followersfollowingprof.push(uprofilefind);
         }
       }

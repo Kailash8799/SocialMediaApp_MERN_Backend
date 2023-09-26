@@ -24,6 +24,17 @@ const io = new Server(server, {
   },
 });
 
+io.on("connection", (socket) => {
+    console.log("a user connected");
+    socket.on("chat message", (msg) => {
+        console.log("message: " + msg);
+        io.emit("chat message", msg);
+    });
+    socket.on("disconnect", () => {
+        console.log("user disconnected");
+    });
+});
+
 router.post("/", async(req,res)=>{
     res.status(200).json({message:"chat route"})
 })
