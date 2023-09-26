@@ -859,6 +859,45 @@ router.post("/getParticularpost", async (req, res) => {
   }
 });
 
+router.post("/getParticularVideopost", async (req, res) => {
+  try {
+    const { secret, id } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const video = await Video.findOne({ _id: id }).populate("profileId");
+    if (video) {
+      res.json({ success: true, message: "Post fetched", posts: video });
+      return;
+    } else {
+      res.json({ success: false, message: "Some error accured!" });
+    }
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+router.post("/getParticularTweetpost", async (req, res) => {
+  try {
+    const { secret, id } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const tweet = await Tweet.findOne({ _id: id }).populate("profileId");
+    if (tweet) {
+      res.json({ success: true, message: "Post fetched", posts: tweet });
+      return;
+    } else {
+      res.json({ success: false, message: "Some error accured!" });
+    }
+  } catch (error) {
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
+
 router.post("/fetchCommentonimage", async (req, res) => {
   try {
     const { secret, id } = req.body;
