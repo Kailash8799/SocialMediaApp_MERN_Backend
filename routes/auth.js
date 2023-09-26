@@ -10,6 +10,9 @@ var AES_SECRET = process.env.AES_SECRET;
 var REACT_APP_SECRET = process.env.REACT_APP_SECRET;
 const nodemailer = require("nodemailer");
 const Profile = require("../models/Profile");
+const Video = require("../models/Video");
+const Tweet = require("../models/Tweet");
+const Image = require("../models/Image");
 const REACT_APP_URL = process.env.REACT_APP_LOCALHOST;
 
 router.post("/signup", async (req, res) => {
@@ -503,6 +506,61 @@ router.post("/getUser", Authuser, async (req, res) => {
     res.json({ success: false, message: "Some error accured!" });
   }
 });
+router.post("/getuserwithdata", Authuser, async (req, res) => {
+  try {
+    let { secret, token, username } = req.body;
+    if (req.method !== "POST" || secret !== REACT_APP_SECRET) {
+      res.json({ success: false, message: "Unauthorised" });
+      return;
+    }
+    let profilevideo = [];
+    let profileimage = [];
+    let profiletweet = [];
+
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { profileid } = decode;
+    let myprofile = await Profile.findOne({ _id: profileid });
+
+    let profile = await Profile.findOne({ username });
+    for (let index = 0; index < profile?.videos?.length; index++) {
+      let vidoed = await Video.findOne({ _id: profile?.videos[index] });
+      if (vidoed != null) {
+        profilevideo.push(vidoed);
+      }
+    }
+    for (let index = 0; index < profile?.images?.length; index++) {
+      let vidoed = await Image.findOne({ _id: profile?.images[index] });
+      if (vidoed != null) {
+        profileimage.push(vidoed);
+      }
+    }
+    for (let index = 0; index < profile?.tweets?.length; index++) {
+      let vidoed = await Tweet.findOne({ _id: profile?.tweets[index] });
+      if (vidoed != null) {
+        profiletweet.push(vidoed);
+      }
+    }
+    if (profile) {
+      console.log(profiletweet);
+      res.json({
+        success: true,
+        message: "Profile fetched",
+        profile,
+        profileimage,
+        profilevideo,
+        profiletweet,
+        myprofile
+      });
+      return;
+    }
+    res.json({ success: false, message: "User not found" });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Some error accured!" });
+    return;
+  }
+});
 
 router.post("/followuser", Authuser, async (req, res) => {
   try {
@@ -620,7 +678,9 @@ router.post("/getFollowers", Authuser, async (req, res) => {
     let followersfollowingprof = [];
     for (let index = 0; index < uprofile?.following?.length; index++) {
       if (uprofile?.followers?.includes(uprofile?.following[index])) {
-        const uprofilefind = await Profile.findOne({ _id: uprofile?.following[index] });
+        const uprofilefind = await Profile.findOne({
+          _id: uprofile?.following[index],
+        });
         if (uprofilefind != null) {
           followersfollowingprof.push(uprofilefind);
         }
