@@ -72,18 +72,20 @@ router.post("/postimage", Authuser, async (req, res) => {
   }
 });
 
-async function deleteFile(imageurl) {
+async function deleteFile(imageurl,filedestination) {
   try {
       let public_id = imageurl.split("/").pop().split(".")[0];
-      let deleted = await cloudinary.uploader.destroy(public_id);
+      let deleted = await cloudinary.uploader.destroy(`${filedestination}/${public_id}`);
   } catch (err) {
       console.log(err);
+      res.json({ success: false, message: "Some error accured!" });
+      return;
   }
 }
 
 router.post("/deleteimage", Authuser, async (req, res) => {
   try {
-    const { secret, token, imageid } = req.body;
+    const { secret, token, imageid,link } = req.body;
     if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
       res.json({ success: false, message: "Some error accured!" });
       return;
@@ -109,6 +111,7 @@ router.post("/deleteimage", Authuser, async (req, res) => {
       });
       return;
     }
+    await deleteFile(post[0].imageLink,"SocialMediaApp");
     const uprofile = await Profile.findOne({
       $and: [{ _id: profileid }, { userid: id }],
     });
@@ -207,6 +210,7 @@ router.post("/deletevideo", Authuser, async (req, res) => {
       });
       return;
     }
+    await deleteFile(post[0].videoLink,"Socialmediaappvideo");
     const uprofile = await Profile.findOne({
       $and: [{ _id: profileid }, { userid: id }],
     });

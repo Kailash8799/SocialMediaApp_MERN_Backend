@@ -523,19 +523,19 @@ router.post("/getuserwithdata", Authuser, async (req, res) => {
 
     let profile = await Profile.findOne({ username });
     for (let index = 0; index < profile?.videos?.length; index++) {
-      let vidoed = await Video.findOne({ _id: profile?.videos[index] });
+      let vidoed = await Video.findOne({ _id: profile?.videos[index] }).populate("profileId");
       if (vidoed != null) {
         profilevideo.push(vidoed);
       }
     }
     for (let index = 0; index < profile?.images?.length; index++) {
-      let vidoed = await Image.findOne({ _id: profile?.images[index] });
+      let vidoed = await Image.findOne({ _id: profile?.images[index] }).populate("profileId");
       if (vidoed != null) {
         profileimage.push(vidoed);
       }
     }
     for (let index = 0; index < profile?.tweets?.length; index++) {
-      let vidoed = await Tweet.findOne({ _id: profile?.tweets[index] });
+      let vidoed = await Tweet.findOne({ _id: profile?.tweets[index] }).populate("profileId");
       if (vidoed != null) {
         profiletweet.push(vidoed);
       }
