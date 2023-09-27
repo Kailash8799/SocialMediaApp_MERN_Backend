@@ -75,7 +75,7 @@ cloudinary.config({
 
 app.use(router);
 app.use(
-  cors({ origin: process.env.REACT_APP_LOCALHOST | "http://linkagenetwork.vercel.app", methods: ["GET", "POST"] })
+  cors({ origin: process.env.REACT_APP_LOCALHOST, methods: ["GET", "POST"] })
 );
 
 app.use(bodyParser.json());
