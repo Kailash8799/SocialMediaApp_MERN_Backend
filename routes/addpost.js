@@ -1051,7 +1051,8 @@ async (req, res) => {
   }
 });
 
-router.post("/uploadVideo",multer({ storage: multer.diskStorage({}) }).single("file"), async (req, res) => {
+
+router.post("/uploadvideofile",multer({ storage: multer.diskStorage({}) }).single("file"), async (req, res) => {
   try {
     let file = req.file.path;
     const options = {
@@ -1080,7 +1081,6 @@ router.post("/uploadVideo",multer({ storage: multer.diskStorage({}) }).single("f
     return;
   }
 });
-
 
 
 module.exports = router;
