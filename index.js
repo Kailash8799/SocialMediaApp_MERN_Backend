@@ -75,7 +75,7 @@ cloudinary.config({
 
 app.use(router);
 app.use(
-  cors({ origin: process.env.REACT_APP_LOCALHOST, methods: ["GET", "POST"] })
+  cors({ origin: process.env.REACT_APP_LOCALHOST, methods: ["GET", "POST"],credentials:true,optionsSuccessStatus:200, })
 );
 
 app.use(bodyParser.json());
