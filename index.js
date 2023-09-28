@@ -73,6 +73,14 @@ cloudinary.config({
   secure: true,
 });
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.REACT_APP_LOCALHOST);
+  // You can also specify other CORS headers as needed
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
 app.use(router);
 app.use(
   cors({ origin: process.env.REACT_APP_LOCALHOST, methods: ["GET", "POST"],credentials:true,optionsSuccessStatus:200, })
