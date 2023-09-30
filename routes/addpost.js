@@ -958,10 +958,11 @@ router.post("/fetchCommentontweet", async (req, res) => {
       "profileId"
     );
     if (comment) {
-      res.json({ success: true, message: "Post fetched", comments: comment });
+      res.json({ success: true, message: "Tweet comment fetched", comments: comment });
       return;
     } else {
       res.json({ success: false, message: "Some error accured!" });
+      return;
     }
   } catch (error) {
     res.json({ success: false, message: "Some error accured!" });
