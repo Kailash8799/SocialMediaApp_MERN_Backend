@@ -20,8 +20,8 @@ const LikeImage = require("../models/LikeImage");
 const { default: mongoose } = require("mongoose");
 const LikeVideo = require("../models/LikeVideo");
 const LikeTweet = require("../models/LikeTweet");
-const fileUpload = require('express-fileupload');
-const cloudinary = require('cloudinary').v2;
+const fileUpload = require("express-fileupload");
+const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 const path = require("path");
 
@@ -72,24 +72,26 @@ router.post("/postimage", Authuser, async (req, res) => {
   }
 });
 
-async function deleteFile(imageurl,filedestination) {
+async function deleteFile(imageurl, filedestination) {
   try {
-      let public_id = imageurl.split("/").pop().split(".")[0];
-      let deleted = await cloudinary.uploader.destroy(`${filedestination}/${public_id}`);
-      console.log('====================================');
-      console.log(filedestination);
-      console.log(public_id);
-      console.log('====================================');
-    } catch (err) {
-      console.log(err);
-      res.json({ success: false, message: "Some error accured!" });
-      return;
+    let public_id = imageurl.split("/").pop().split(".")[0];
+    let deleted = await cloudinary.uploader.destroy(
+      `${filedestination}/${public_id}`
+    );
+    console.log("====================================");
+    console.log(filedestination);
+    console.log(public_id);
+    console.log("====================================");
+  } catch (err) {
+    console.log(err);
+    res.json({ success: false, message: "Some error accured!" });
+    return;
   }
 }
 
 router.post("/deleteimage", Authuser, async (req, res) => {
   try {
-    const { secret, token, imageid,link } = req.body;
+    const { secret, token, imageid, link } = req.body;
     if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
       res.json({ success: false, message: "Some error accured!" });
       return;
@@ -115,7 +117,7 @@ router.post("/deleteimage", Authuser, async (req, res) => {
       });
       return;
     }
-    await deleteFile(post[0].imageLink,"SocialMediaApp");
+    await deleteFile(post[0].imageLink, "SocialMediaApp");
     const uprofile = await Profile.findOne({
       $and: [{ _id: profileid }, { userid: id }],
     });
@@ -214,7 +216,7 @@ router.post("/deletevideo", Authuser, async (req, res) => {
       });
       return;
     }
-    await deleteFile(post[0].videoLink,"Socialmediaappvideo");
+    await deleteFile(post[0].videoLink, "Socialmediaappvideo");
     const uprofile = await Profile.findOne({
       $and: [{ _id: profileid }, { userid: id }],
     });
@@ -384,6 +386,7 @@ router.post("/postimagecomment", Authuser, async (req, res) => {
     return;
   }
 });
+
 router.post("/postvideocomment", Authuser, async (req, res) => {
   try {
     const { secret, token, comment, postid } = req.body;
@@ -485,6 +488,157 @@ router.post("/posttextcomment", Authuser, async (req, res) => {
     return;
   }
 });
+
+router.post("/deletetextcomment", Authuser, async (req, res) => {
+  try {
+    const { secret, token, commentid, postid } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { username, email, id } = decode;
+    const user = await User.find(
+      { $and: [{ username: username }, { email: email }, { _id: id }] },
+      { _id: 0, username: 0, email: 0, password: 0 }
+    );
+    if (user?.length === 0) {
+      res.json({
+        success: false,
+        message: "Please logout then login and try again!",
+      });
+      return;
+    }
+    const textpost = await Tweet.findOne({
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
+    });
+
+    if (textpost === null) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const com = await CommentOnTweet.findOne({ _id: commentid });
+    if (com === null) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    await CommentOnTweet.findByIdAndDelete(commentid);
+    const comments = textpost?.comments;
+    const newComments = comments.remove(commentid);
+    await Tweet.updateOne(
+      { $and: [{ _id: postid }] },
+      { $set: { comments: newComments } },
+      { new: true }
+    );
+    res.json({ success: true, message: "Comment uploaded successfully" });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Some error accured! catch" });
+    return;
+  }
+});
+
+router.post("/deleteimagecomment", Authuser, async (req, res) => {
+  try {
+    const { secret, token, commentid, postid } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { username, email, id } = decode;
+    const user = await User.find(
+      { $and: [{ username: username }, { email: email }, { _id: id }] },
+      { _id: 0, username: 0, email: 0, password: 0 }
+    );
+    if (user?.length === 0) {
+      res.json({
+        success: false,
+        message: "Please logout then login and try again!",
+      });
+      return;
+    }
+    const textpost = await Image.findOne({
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
+    });
+
+    if (textpost === null) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const com = await CommentOnImage.findOne({ _id: commentid });
+    if (com === null) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    await CommentOnImage.findByIdAndDelete(commentid);
+    const comments = textpost?.comments;
+    const newComments = comments.remove(commentid);
+    await Image.updateOne(
+      { $and: [{ _id: postid }] },
+      { $set: { comments: newComments } },
+      { new: true }
+    );
+    res.json({ success: true, message: "Comment uploaded successfully" });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Some error accured! catch" });
+    return;
+  }
+});
+
+router.post("/deletevideocomment", Authuser, async (req, res) => {
+  try {
+    const { secret, token, commentid, postid } = req.body;
+    if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const decode = jwt.verify(token, JWT_SECRET);
+    const { username, email, id } = decode;
+    const user = await User.find(
+      { $and: [{ username: username }, { email: email }, { _id: id }] },
+      { _id: 0, username: 0, email: 0, password: 0 }
+    );
+    if (user?.length === 0) {
+      res.json({
+        success: false,
+        message: "Please logout then login and try again!",
+      });
+      return;
+    }
+    const textpost = await Video.findOne({
+      $and: [{ _id: new mongoose.Types.ObjectId(postid) }],
+    });
+
+    if (textpost === null) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    const com = await CommentOnVideo.findOne({ _id: commentid });
+    if (com === null) {
+      res.json({ success: false, message: "Some error accured!" });
+      return;
+    }
+    await CommentOnVideo.findByIdAndDelete(commentid);
+    const comments = textpost?.comments;
+    const newComments = comments.remove(commentid);
+    await Video.updateOne(
+      { $and: [{ _id: postid }] },
+      { $set: { comments: newComments } },
+      { new: true }
+    );
+    res.json({ success: true, message: "Comment uploaded successfully" });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Some error accured! catch" });
+    return;
+  }
+});
+
 router.post("/likeimage", Authuser, async (req, res) => {
   try {
     const { secret, token, postid } = req.body;
@@ -958,7 +1112,11 @@ router.post("/fetchCommentontweet", async (req, res) => {
       "profileId"
     );
     if (comment) {
-      res.json({ success: true, message: "Tweet comment fetched", comments: comment });
+      res.json({
+        success: true,
+        message: "Tweet comment fetched",
+        comments: comment,
+      });
       return;
     } else {
       res.json({ success: false, message: "Some error accured!" });
@@ -1027,65 +1185,78 @@ router.post("/unsaved", Authuser, async (req, res) => {
   }
 });
 
-router.post("/uploadImage", multer({ storage: multer.diskStorage({}) }).single("file"),
-async (req, res) => {
-  try {
-    let file = req.file.path;
-    const options = {
-      upload_preset:'socialmediapp',
-      use_filename: true,
-      unique_filename: false,
-      overwrite: true,
-    };
+router.post(
+  "/uploadImage",
+  multer({ storage: multer.diskStorage({}) }).single("file"),
+  async (req, res) => {
     try {
-      // Upload the image
-      const result = await cloudinary.uploader.upload(file, options);
-      if(result?.public_id != null && result?.url != null){
-        res.json({ success: true, message: "Image uploaded",url:result?.secure_url });
-        return;
+      let file = req.file.path;
+      const options = {
+        upload_preset: "socialmediapp",
+        use_filename: true,
+        unique_filename: false,
+        overwrite: true,
+      };
+      try {
+        // Upload the image
+        const result = await cloudinary.uploader.upload(file, options);
+        if (result?.public_id != null && result?.url != null) {
+          res.json({
+            success: true,
+            message: "Image uploaded",
+            url: result?.secure_url,
+          });
+          return;
+        }
+      } catch (error) {
+        console.error(error);
       }
+      res.json({ success: false, message: "Image not uploaded" });
+      return;
     } catch (error) {
-      console.error(error);
+      console.log(error);
+      res.json({ success: false, message: "Some error accured!" });
+      return;
     }
-    res.json({ success: false, message: "Image not uploaded" });
-    return;
-  } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: "Some error accured!" });
-    return;
   }
-});
+);
 
-
-router.post("/uploadvideofile",multer({ storage: multer.diskStorage({}) }).single("file"), async (req, res) => {
-  try {
-    let file = req.file.path;
-    const options = {
-      resource_type: "video", 
-      upload_preset:'socialmediaappvideo',
-      use_filename: true,
-      unique_filename: false,
-      overwrite: true,
-      eager_async: true,
-    };
+router.post(
+  "/uploadvideofile",
+  multer({ storage: multer.diskStorage({}) }).single("file"),
+  async (req, res) => {
     try {
-      const result = await cloudinary.uploader.upload(file, options);
-      if(result?.public_id != null && result?.url != null){
-        res.json({ success: true, message: "Image uploaded",url:result?.secure_url });
-        return;
+      let file = req.file.path;
+      const options = {
+        resource_type: "video",
+        upload_preset: "socialmediaappvideo",
+        use_filename: true,
+        unique_filename: false,
+        overwrite: true,
+        eager_async: true,
+      };
+      try {
+        const result = await cloudinary.uploader.upload(file, options);
+        if (result?.public_id != null && result?.url != null) {
+          res.json({
+            success: true,
+            message: "Image uploaded",
+            url: result?.secure_url,
+          });
+          return;
+        }
+      } catch (error) {
+        console.error(error);
       }
+
+      res.json({ success: false, message: "Image not uploaded" });
+      return;
     } catch (error) {
-      console.error(error);
+      console.log(error);
+      res.json({ success: false, message: "Some error accured!" });
+      return;
     }
-
-    res.json({ success: false, message: "Image not uploaded" });
-    return;
-  } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: "Some error accured!" });
-    return;
   }
-});
-
+);
 
 module.exports = router;
