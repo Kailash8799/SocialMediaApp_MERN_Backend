@@ -78,10 +78,6 @@ async function deleteFile(imageurl, filedestination) {
     let deleted = await cloudinary.uploader.destroy(
       `${filedestination}/${public_id}`
     );
-    console.log("====================================");
-    console.log(filedestination);
-    console.log(public_id);
-    console.log("====================================");
   } catch (err) {
     console.log(err);
     res.json({ success: false, message: "Some error accured!" });
@@ -1259,4 +1255,4 @@ router.post(
   }
 );
 
-module.exports = router;
+module.exports = router , {deleteFile};

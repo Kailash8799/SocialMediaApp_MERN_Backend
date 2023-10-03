@@ -14,6 +14,7 @@ const Video = require("../models/Video");
 const Tweet = require("../models/Tweet");
 const Image = require("../models/Image");
 const REACT_APP_URL = process.env.REACT_APP_LOCALHOST;
+const {deleteFile} = require("./addpost")
 
 router.post("/signup", async (req, res) => {
   try {
@@ -523,19 +524,25 @@ router.post("/getuserwithdata", Authuser, async (req, res) => {
 
     let profile = await Profile.findOne({ username });
     for (let index = 0; index < profile?.videos?.length; index++) {
-      let vidoed = await Video.findOne({ _id: profile?.videos[index] }).populate("profileId");
+      let vidoed = await Video.findOne({
+        _id: profile?.videos[index],
+      }).populate("profileId");
       if (vidoed != null) {
         profilevideo.push(vidoed);
       }
     }
     for (let index = 0; index < profile?.images?.length; index++) {
-      let vidoed = await Image.findOne({ _id: profile?.images[index] }).populate("profileId");
+      let vidoed = await Image.findOne({
+        _id: profile?.images[index],
+      }).populate("profileId");
       if (vidoed != null) {
         profileimage.push(vidoed);
       }
     }
     for (let index = 0; index < profile?.tweets?.length; index++) {
-      let vidoed = await Tweet.findOne({ _id: profile?.tweets[index] }).populate("profileId");
+      let vidoed = await Tweet.findOne({
+        _id: profile?.tweets[index],
+      }).populate("profileId");
       if (vidoed != null) {
         profiletweet.push(vidoed);
       }
@@ -549,7 +556,7 @@ router.post("/getuserwithdata", Authuser, async (req, res) => {
         profileimage,
         profilevideo,
         profiletweet,
-        myprofile
+        myprofile,
       });
       return;
     }
@@ -659,8 +666,40 @@ router.post("/getalluser", Authuser, async (req, res) => {
   }
 });
 
-router.post("/updateUser", async (req, res) => {
-  res.json({ success: true, message: "Forgot Password successfully" });
+router.post("/updateUser", Authuser, async (req, res) => {
+  try {
+    const { usernameemail, profileImage, secret,oldImage,token } = req.body;
+    if (req.method !== "POST" || secret !== REACT_APP_SECRET) {
+      res.json({
+        success: false,
+        message: "Some error accured!",
+      });
+      return;
+    }
+    const user = await User.find({
+      $or: [{ username: usernameemail }, { email: usernameemail }],
+    });
+    if (user?.length === 0) {
+      res.json({
+        success: false,
+        message: "Unauthorised",
+      });
+      return;
+    }
+    // await deleteFile(oldImage,"SocialMediaApp")
+    await Profile.findOneAndUpdate({useremail:usernameemail},{profileImage:profileImage})
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+    });
+    return;
+  } catch (error) {
+    res.json({
+      success: false,
+      message: "Some error accured!",
+    });
+    return;
+  }
 });
 
 router.post("/getFollowers", Authuser, async (req, res) => {
