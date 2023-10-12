@@ -93,7 +93,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 ConnectDb();
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/addpost", require("./routes/addpost"));
-// app.use("/api/chat",require("./routes/chat"))
+app.use("/api/story",require("./routes/story"))
 // app.use("/api/order",require("./routes/order"))
 
 server.listen(PORT, () => {
