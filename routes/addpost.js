@@ -915,7 +915,7 @@ router.post("/getAllPosts", async (req, res) => {
     const decode = jwt.verify(token, JWT_SECRET);
     const { profileid } = decode;
     const profile = await Profile.findOne({ _id: profileid });
-    const posts = await Image.find().populate("profileId");
+    const posts = await Image.find().populate("profileId").sort({ createdAt: 'desc' });
     if (posts) {
       res.json({
         success: true,
