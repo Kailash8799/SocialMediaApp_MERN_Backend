@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "run": "nodemon index.js"
+    "run": "nodemon index.js",
+    "start": "nodemon index.js"
   },
   "author": "kailash rajput",
   "license": "ISC",

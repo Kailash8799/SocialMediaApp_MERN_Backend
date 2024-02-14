@@ -1,9 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const app = express();
-var AES_SECRET = process.env.AES_SECRET;
-const nodemailer = require("nodemailer");
-const REACT_APP_URL = process.env.REACT_APP_LOCALHOST;
 var REACT_APP_SECRET = process.env.REACT_APP_SECRET;
 const Authuser = require("../middleware/authuser");
 var JWT_SECRET = process.env.JWT_SECRET;
@@ -20,10 +16,8 @@ const LikeImage = require("../models/LikeImage");
 const { default: mongoose } = require("mongoose");
 const LikeVideo = require("../models/LikeVideo");
 const LikeTweet = require("../models/LikeTweet");
-const fileUpload = require("express-fileupload");
 const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
-const path = require("path");
 
 router.post("/postimage", Authuser, async (req, res) => {
   try {
@@ -75,9 +69,6 @@ router.post("/postimage", Authuser, async (req, res) => {
 async function deleteFile(imageurl, filedestination) {
   try {
     let public_id = imageurl.split("/").pop().split(".")[0];
-    let deleted = await cloudinary.uploader.destroy(
-      `${filedestination}/${public_id}`
-    );
   } catch (err) {
     console.log(err);
     res.json({ success: false, message: "Some error accured!" });
@@ -87,7 +78,7 @@ async function deleteFile(imageurl, filedestination) {
 
 router.post("/deleteimage", Authuser, async (req, res) => {
   try {
-    const { secret, token, imageid, link } = req.body;
+    const { secret, token, imageid } = req.body;
     if (req.method !== "POST" || REACT_APP_SECRET !== secret) {
       res.json({ success: false, message: "Some error accured!" });
       return;
@@ -643,7 +634,7 @@ router.post("/likeimage", Authuser, async (req, res) => {
       return;
     }
     const decode = jwt.verify(token, JWT_SECRET);
-    const { username, email, id, profileid } = decode;
+    const { username, email, id } = decode;
     const user = await User.find(
       { $and: [{ username: username }, { email: email }, { _id: id }] },
       { _id: 0, username: 0, email: 0, password: 0 }
@@ -688,7 +679,7 @@ router.post("/dislikeimage", Authuser, async (req, res) => {
       return;
     }
     const decode = jwt.verify(token, JWT_SECRET);
-    const { username, email, id, profileid } = decode;
+    const { username, email, id } = decode;
     const user = await User.find(
       { $and: [{ username: username }, { email: email }, { _id: id }] },
       { _id: 0, username: 0, email: 0, password: 0 }
@@ -733,7 +724,7 @@ router.post("/likevideo", Authuser, async (req, res) => {
       return;
     }
     const decode = jwt.verify(token, JWT_SECRET);
-    const { username, email, id, profileid } = decode;
+    const { username, email, id } = decode;
     const user = await User.find(
       { $and: [{ username: username }, { email: email }, { _id: id }] },
       { _id: 0, username: 0, email: 0, password: 0 }
@@ -778,7 +769,7 @@ router.post("/dislikevideo", Authuser, async (req, res) => {
       return;
     }
     const decode = jwt.verify(token, JWT_SECRET);
-    const { username, email, id, profileid } = decode;
+    const { username, email, id } = decode;
     const user = await User.find(
       { $and: [{ username: username }, { email: email }, { _id: id }] },
       { _id: 0, username: 0, email: 0, password: 0 }
@@ -823,7 +814,7 @@ router.post("/liketweet", Authuser, async (req, res) => {
       return;
     }
     const decode = jwt.verify(token, JWT_SECRET);
-    const { username, email, id, profileid } = decode;
+    const { username, email, id } = decode;
     const user = await User.find(
       { $and: [{ username: username }, { email: email }, { _id: id }] },
       { _id: 0, username: 0, email: 0, password: 0 }
@@ -868,7 +859,7 @@ router.post("/disliketweet", Authuser, async (req, res) => {
       return;
     }
     const decode = jwt.verify(token, JWT_SECRET);
-    const { username, email, id, profileid } = decode;
+    const { username, email, id } = decode;
     const user = await User.find(
       { $and: [{ username: username }, { email: email }, { _id: id }] },
       { _id: 0, username: 0, email: 0, password: 0 }

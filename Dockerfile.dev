@@ -1,0 +1,17 @@
+ARG NODE_VERSION=20.11.0
+
+FROM node:${NODE_VERSION}-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+COPY . .
+
+RUN npm install
+
+ENV PORT=5000
+
+EXPOSE 5000
+
+CMD ["node", "index.js"]

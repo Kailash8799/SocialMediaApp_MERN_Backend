@@ -74,17 +74,26 @@ cloudinary.config({
 });
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', process.env.REACT_APP_LOCALHOST);
+  res.setHeader("Access-Control-Allow-Origin", process.env.REACT_APP_LOCALHOST);
   // You can also specify other CORS headers as needed
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
 
 app.use(router);
 app.use(
-  cors({ origin: process.env.REACT_APP_LOCALHOST, methods: ["GET", "POST"],credentials:true,optionsSuccessStatus:200, })
+  cors({
+    origin: process.env.REACT_APP_LOCALHOST,
+    methods: ["GET", "POST"],
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
 );
+
+app.get("/", (req, res) => {
+  res.json({ docker: "Welcome to my container" });
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -93,7 +102,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 ConnectDb();
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/addpost", require("./routes/addpost"));
-app.use("/api/story",require("./routes/story"))
+app.use("/api/story", require("./routes/story"));
 // app.use("/api/order",require("./routes/order"))
 
 server.listen(PORT, () => {

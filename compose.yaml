@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  backend_dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - '5000:5000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
